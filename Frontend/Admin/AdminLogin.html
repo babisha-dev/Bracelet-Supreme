@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #e4e4eb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .login-card {
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 16px;
+            padding: 40px 36px 32px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .login-card .brand-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #e94560, #c23152);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 26px;
+        }
+
+        .login-card h2 {
+            color: #e5dcdc;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 1.5rem;
+        }
+
+        .login-card .subtitle {
+            color: #7a7a9a;
+            text-align: center;
+            font-size: 0.88rem;
+            margin-bottom: 28px;
+        }
+
+        .login-card label {
+            color: #a0a0b8;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+
+        .login-card .form-control {
+            background: #e2e4e8;
+            border: 1px solid #1a4a7a;
+            color: #141414;
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .login-card .form-control:focus {
+            background: #e3e5e9;
+            border-color: #2d2b2b;
+            box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.25);
+            color: #0d0d0d;
+        }
+
+        .login-card .form-control::placeholder {
+            color: #2d2e30;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #4e4849, #514e4f);
+            border: none;
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity 0.2s, transform 0.1s;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-login:hover {
+            opacity: 0.88;
+        }
+
+        .btn-login:active {
+            transform: scale(0.97);
+        }
+
+        #error-msg {
+            display: none;
+            background: rgba(233, 69, 96, 0.15);
+            border: 1px solid rgba(233, 69, 96, 0.35);
+            color: #5b5657;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .hint {
+            color: #4a5a7a;
+            font-size: 0.76rem;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+
+        <h2>Admin Login</h2>
+        <p class="subtitle">Sign in to manage your store</p>
+
+        <div class="mb-3">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter username" autocomplete="off">
+        </div>
+
+        <div class="mb-3">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter password">
+        </div>
+
+        <button class="btn-login" onclick="login()">Sign In</button>
+
+        <div id="error-msg">Invalid username or password.</div>
+
+    </div>
+
+    <script>
+       
+        const ADMIN_USER = "admin";
+        const ADMIN_PASS = "admin";
+       
+
+        function login() {
+            const user = document.getElementById("username").value.trim();
+            const pass = document.getElementById("password").value.trim();
+            const errMsg = document.getElementById("error-msg");
+
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                sessionStorage.setItem("adminLoggedIn", "true");
+                window.location.href = "AddProducts.html";
+            } else {
+                errMsg.style.display = "block";
+                document.querySelector(".login-card").style.animation = "none";
+                void document.querySelector(".login-card").offsetWidth; 
+                document.querySelector(".login-card").style.animation = "shake 0.4s ease";
+            }
+        }
+
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") login();
+        });
+
+        ["username", "password"].forEach(id => {
+            document.getElementById(id).addEventListener("input", () => {
+                document.getElementById("error-msg").style.display = "none";
+            });
+        });
+
+        if (sessionStorage.getItem("adminLoggedIn") === "true") {
+            window.location.href = "AddProducts.html";
+        }
+
+        const style = document.createElement("style");
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%      { transform: translateX(-8px); }
+                40%      { transform: translateX(8px); }
+                60%      { transform: translateX(-5px); }
+                80%      { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

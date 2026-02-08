@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center my-4">Edit Product</h1>
+
+        <form id="editform">
+            <input type="hidden" id="productId">
+            
+            <div class="mb-3">
+                <label class="form-label" for="productName">Product Name</label>
+                <input class="form-control" type="text" id="productName" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label" for="productCategory">Category</label>
+                <input class="form-control" type="text" id="productCategory" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="productPrice">Price</label>
+                <input class="form-control" type="number" step="0.01" id="productPrice" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label" for="productImg">Image URL</label>
+                <input class="form-control" type="url" id="productImg" required>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Update Product</button>
+            <a href="ManageProducts.html" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div> 
+    
+    <script>
+       
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        if (!productId) {
+            alert('No product ID provided!');
+            window.location.href = 'ManageProducts.html';
+        }
+
+       
+        fetch(`http://localhost:8080/api/products`)
+            .then(res => res.json())
+            .then(products => {
+                const product = products.find(p => p.id == productId);
+                
+                if (!product) {
+                    alert('Product not found!');
+                    window.location.href = 'ManageProducts.html';
+                    return;
+                }
+
+                
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productCategory').value = product.category;
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productImg').value = product.img;
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Failed to load product data');
+            });
+
+        
+        const form = document.getElementById('editform');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const updatedProduct = {
+                id: parseInt(document.getElementById('productId').value),
+                name: document.getElementById('productName').value,
+                category: document.getElementById('productCategory').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                img: document.getElementById('productImg').value
+            };
+
+            console.log('Updating product:', updatedProduct);
+
+            fetch('http://localhost:8080/api/products', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedProduct)
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    alert(' Product updated successfully!');
+                    window.location.href = 'ManageProducts.html';
+                } else {
+                    throw new Error('Failed to update product');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating product!');
+            });
+        });
+    </script>
+</body>
+</html> 
